@@ -1,0 +1,242 @@
+Priority_Queue
+
+1. public PriorityQueue()
+{
+    this(DEFAULT_INITIAL_CAPACITY, null);
+}
+使用默认长度11初始化这个队列，并且队列中的元素按照自然顺序排列；
+
+2.public PriorityQueue(Collection<? extends E> c)
+  {
+    //构造一个指定collection 集合参数的优先队列
+   this(Math.max(1, (int) (1.1 * c.size())), null);
+   /判断指定集合是否为空；
+ // Special case where we can find the comparator to use.
+    //指定的集合是包含比较器(sortedSet 或者priorityQueue，用集合本身的比较器来初始化优先队列)
+    if (c instanceof SortedSet)
+    {
+     SortedSet<? extends E> ss = (SortedSet<? extends E>) c;
+    this.comparator = (Comparator<? super E>) ss.comparator();
+      // We can insert the elements directly, since they are sorted.
+      int i = 0;
+     for (E val : ss)
+       {
+         if (val == null) //如果元素为null，则抛出异常；
+          throw new NullPointerException();
+         storage[i++] = val;//当前值不为空，则优先队列的存储器的当前位置符新值，并且位置指针向后移；
+       }
+        }
+     else if (c instanceof PriorityQueue)
+       { //如果比较器是优先队列，则直接复制整个set即可；
+     PriorityQueue<? extends E> pq = (PriorityQueue<? extends E>) c;
+      this.comparator = (Comparator<? super E>)pq.comparator();
+     // We can just copy the contents.
+      System.arraycopy(pq.storage, 0, storage, 0, pq.storage.length);
+      }
+     addAll(c);
+    }
+
+    3. public PriorityQueue(int cap)
+   { //初始化指定容量大小的优先队列，
+     this(cap, null);
+   }
+   4. public PriorityQueue(int cap, Comparator<? super E> comp)
+    { //初始化指定大小，和指定比较器的优先队列
+     this.used = 0; //初始化优先队列现在已经被用的位置为0
+     this.storage = (E[]) new Object[cap];//初始化优先队列storage，并且大小为指定的cap；
+     this.comparator = comp;// 比较器为指定的比较器
+   }
+
+   public void clear()
+   {
+     Arrays.fill(storage, null); //用arrays.fill把优先队列全部服为null
+    used = 0;//该优先队列空间使用情况赋值为0；
+    }
+
+public Comparator<? super E> comparator()
+   {//返回当前优先队列的比较器
+    return comparator;
+   }
+ 
+ public Iterator<E> iterator()
+    {
+      return new Iterator<E>()
+     { //初始化一个迭代器，初始化遍历index，和计数器，判断遍历迭代器是否到队列最后一个，如果count<used,则不是最后一个，否则已经到最尾端，返回false，用while循环遍历，计数器+1，如果当前位置不为null，，并且返回；
+       int index = -1;
+       int count = 0;
+ 
+       public boolean hasNext()
+       { //判断队列当前位置的下一个位置时候有值，如果count<used,则下一位有值，返回true；否则，返回false
+     return count < used;
+      }
+ 
+       public E next()
+       {
+    while (storage[++index] == null)
+      ;
+        
+    ++count;
+    return storage[index];
+      }
+ 
+       public void remove()
+       { //删除优先队列当且元素
+    PriorityQueue.this.remove(index);
+       }
+     };
+  }
+ 
+ public boolean offer(E o)
+   {
+    if (o == null) //如果o为返回异常
+       throw new NullPointerException();
+     int slot = findSlot(-1);//o不为空，找到插入位置
+ 
+    storage[slot] = o; //将找到的可以插入的位置赋值为o，
+     ++used;//优先队列使用空间+1
+     bubbleUp(slot);//对该插入位置进行排序
+    return true;
+   }
+
+  public E peek()
+   {
+     return used == 0 ? null : storage[0]; //如果队列为空，返回null；不为空返回第一个元素
+   }
+    public E poll()
+   {
+     if (used == 0) //如果队列为空，返回null；不为空将第一个元素返回并删除；
+       return null;
+     E result = storage[0];
+      remove(0);
+     return result;
+   }
+
+    public boolean remove(Object o)
+  {
+     if (o != null)//如果o为null，返回false；
+      {如果o不为null，顺序遍历队列，找到o第一次出现的位置，删除它，并返回true
+    for (int i = 0; i < storage.length; ++i)
+      {
+         if (o.equals(storage[i]))
+          {
+         remove(i);
+         return true;
+          }
+       }
+      }
+     return false;
+   }
+
+   public int size()
+   { //返回当前队列used的值即为其大小
+     return used;
+   }
+
+   public boolean addAll(Collection<? extends E> c)
+   {
+       //如果需要添加的集合为当且队列抛出不合法的异常
+     if (c == this)
+       throw new IllegalArgumentException();
+    
+    int newSlot = -1; 
+    int save = used; //记录新队列元素个数
+     for (E val : c)
+      {遍历需要添加集合的元素
+     if (val == null)//如果元素为null，抛出异常NullPointerException
+      throw new NullPointerException();
+     newSlot = findSlot(newSlot);//找到可以添加的位置并赋值
+    storage[newSlot] = val;
+     ++used;//used计数器+1
+     bubbleUp(newSlot);//对新加入的元素排序
+       }
+ 
+     return save != used;//如果used和原始优先队列数量不同， 表示添加成功
+   }
+
+   int findSlot(int start)
+   { 
+      int slot;
+      if (used == storage.length)
+       { //如果当前队列空间全部用完，则resize该队列容量为2倍
+     resize();
+     slot = used;//slot赋值为used，即为可插入元素的位置
+       }
+     else
+        {
+     for (slot = start + 1; slot < storage.length; ++slot)
+       {//如果当前队列位置未用完，则从当前队列最后一个位置开始查找，指针指向队列位置的元素为null，则当前位置可插入新元素
+        if (storage[slot] == null)
+           break;
+       }
+     // We'll always find a slot.
+       }
+     return slot;
+    }
+ 
+   void remove(int index)
+   {
+     // Remove the element at INDEX.  We do this by finding the least
+     // child and moving it into place, then iterating until we reach
+     // the bottom of the tree.
+     while (storage[index] != null)
+       { //找到删除元素的孩子
+      int child = 2 * index + 1;
+ 
+     // See if we went off the end.
+     if (child >= storage.length)
+       { 如果孩子的index大于当前队列的容量，则直接把当前位置赋值为null，结束循环
+         storage[index] = null;
+         break;
+       }
+ 
+    // Find which child we want to promote.  If one is not null,
+     // we pick it.  If both are null, it doesn't matter, we're
+     // about to leave.  If neither is null, pick the lesser.
+     if (child + 1 >= storage.length || storage[child + 1] == null)
+       { //如果child+1的位置超出队列容量，或者该为位置为null，则什么都不做
+         // Nothing.
+       }
+    else if (storage[child] == null //如果child位置为null，child+1 不为null，则把child+1的值赋值给需要删除的位置；如果两个位置都不为null，把child和child+1中较小的值赋值给index的位置；
+          || (Collections.compare(storage[child], storage[child + 1],
+                      comparator) > 0))
+       ++child;
+     storage[index] = storage[child];
+    index = child; 
+    //对该队列child后的元素循环上述操作，直到最后一个元素；
+      }
+     --used;
+   }
+ 
+  void bubbleUp(int index)
+   {
+    // The element at INDEX was inserted into a blank spot.  Now move
+     // it up the tree to its natural resting place.
+     while (index > 0)
+      {
+     // This works regardless of whether we're at 2N+1 or 2N+2.
+     int parent = (index - 1) / 2; //找到当前index的父亲
+     if (Collections.compare(storage[parent], storage[index], comparator)
+         <= 0) //如果其父亲小于当前index值，则保留当前队列排列顺序
+       {
+         // Parent is the same or smaller than this element, so the
+         // invariant is preserved.  Note that if the new element
+         // is smaller than the parent, then it is necessarily
+        // smaller than the parent's other child.
+        break;
+      }
+ 
+     E temp = storage[index];
+     storage[index] = storage[parent];
+     storage[parent] = temp; //否则交换两位置元素值，并且从当前位置向队列的头部循环该操作，直到当前index上升到大于等于其父亲节点的位置，则结束bubbleup操作；
+ 
+     index = parent;
+      }
+  }
+ 
+   void resize()
+   {
+     E[] new_data = (E[]) new Object[2 * storage.length];
+      System.arraycopy(storage, 0, new_data, 0, storage.length);
+     storage = new_data; //生成一个新的队列，其容量为当前队列的2倍，并把原始队列copy到新队列，最后把新队列的地址赋值给storage
+   }
+ }
