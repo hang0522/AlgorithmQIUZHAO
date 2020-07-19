@@ -1,0 +1,139 @@
+Java 中的Deque有以下API：
+1.void addFirst(E e)
+在队列的头部加入一个元素，如果空间足够，则加入成功，无返回值；
+如果空间不够或者插入的元素的其他属性异常，则抛出异常IllegalStateException；
+如果插入的元素是null，则抛出NullPointerException，deque不允许插入null值；
+如果插入的类型和队列不符，则抛出ClassCastException；
+
+ 
+2. void addLast(E e)
+在队列的尾部加入一个元素，如果空间足够，则加入成功，无返回值；
+如果空间不够或者插入的元素的其他属性异常，则抛出异常IllegalStateException；
+如果插入的元素是null，则抛出NullPointerException，deque不允许插入null值；
+如果插入的类型和队列不符，则抛出ClassCastException；
+
+3. boolean offerFirst(E e)
+在队列的头部加入一个元素，如果空间足够，则加入成功，返回true,否则返回false；
+如果插入的类型和队列不符，则抛出ClassCastException
+如果插入的元素是null，则抛出NullPointerException，deque不允许插入null值；
+如果插入的元素存在其他属性的异常，则抛出IllegalArgumentException
+
+4. boolean offerLast(E e)
+在队列的尾部加入一个元素，如果空间足够，则加入成功，返回true,否则返回false；
+如果插入的类型和队列不符，则抛出ClassCastException
+如果插入的元素是null，则抛出NullPointerException，deque不允许插入null值；
+如果插入的元素存在其他属性的异常，则抛出IllegalArgumentException
+
+5.E removeFirst();
+若队列不为空则返回头部的第一个元素，并把它从队列中删除；
+如果队列为空，则返回NoSuchElementException；
+
+6.E removeLast();
+若队列不为空则返回尾部的第一个元素，并把它从队列中删除；
+如果队列为空，则返回NoSuchElementException；
+
+7.E pollFirst();
+若队列不为空则返回头部的第一个元素，并把它从队列中删除；
+如果队列为空，则返回Null；
+
+8.E pollLast();
+若队列不为空则返回尾部的第一个元素，并把它从队列中删除；
+如果队列为空，则返回Null；
+
+9.E getFirst();
+若队列不为空则返回头部的第一个元素，不删除这个元素；
+如果队列为空，则返回NoSuchElementException；
+
+10.E getLast();
+若队列不为空则返回尾部的第一个元素，不删除这个元素；
+如果队列为空，则返回NoSuchElementException；
+
+11.E peekFirst();
+若队列不为空则返回头部的第一个元素，不删除这个元素；
+如果队列为空，则返回Null；
+
+12.E peekLast();
+若队列不为空则返回尾部的第一个元素，不删除这个元素；
+如果队列为空，则返回Null；
+
+13.boolean removeFirstOccurrence(Object o);
+如果队列存在指定的元素o，则删除从队列头部第一个出现的o，并返回true；
+如果指定的o和队列的类别不符，则抛出异常ClassCastException；
+如果队列不存在指定的o，则抛出异常NullPointerException
+
+14.boolean removeLastOccurrence(Object o);
+如果队列存在指定的元素o，则删除从队列尾端开始第一个出现在的o，并返回true；
+如果指定的o和队列的类别不符，则抛出异常ClassCastException；
+如果队列不存在指定的o，则抛出异常NullPointerException；
+
+15. boolean add(E e);
+同addLast
+在队列的尾部插入指定元素 e，如果队列容量允许，则插入成功并返回true；
+如果队列容量不够或者插入的元素存在其他属性异常，则抛出IllegalStateException；
+如果指定插入的元素类别和队列中元素的类别不同，则抛出ClassCastException；
+如果指定插入的元素为Null，则抛出NullPointerException；
+
+16. boolean offer(E e);
+同offerLast(E e);
+在队列的尾部插入指定元素 e，如果队列容量允许，则插入成功并返回true；
+如果插入元素不成功，例如队列空间不够，则返回false；
+如果指定插入的元素类别和队列中元素的类别不同，则抛出ClassCastException；
+如果指定插入的元素为Null，则抛出NullPointerException；
+插入的元素存在其他属性异常，则抛出IllegalStateException；
+
+17.E remove();
+同removeFirst();
+返回队列头部的第一个元素并删除；
+如果队列为空则抛出NoSuchElementException；
+
+18.E poll();
+同pollFirst()
+返回队列头部的第一个元素并删除；
+如果队列为空则返回null；
+
+19. E element();
+同getFirst();
+返回队列头部的第一个，但不删除；
+如果队列为空则抛出异常NoSuchElementException；
+
+20. E peek();
+同peekFirst();
+如果队列不为空则返回队列头部的第一个元素，但不删除；
+如果队列为空，则返回Null；
+
+=================================
+以下为Stack的方法：
+21.void push(E e)
+同addFirst;
+在队列的头部，放入指定元素，
+如果队列空间不足或者指定插入的元素的属性异常，则抛出IllegalStateException
+如果插入的元素是null，则抛出NullPointerException，deque不允许插入null值；
+如果插入的类型和队列不符，则抛出ClassCastException；
+22. E pop()
+同removeFirst
+若队列不为空则返回头部的第一个元素，并把它从队列中删除；
+如果队列为空，则返回NoSuchElementException
+
+23. boolean remove(Object o);
+同removeFirstOccurrence；
+如果队列存在指定的元素o，则删除从队列头部第一个出现的o，并返回true；
+如果指定的o和队列的类别不符，则抛出异常ClassCastException；
+如果队列不存在指定的o，则抛出异常NullPointerException;
+
+
+24. contains(Object o)
+判断队列是否存在o，
+如果队列存在指定的元素o，则删除从队列头部第一个出现的o，并返回true；
+如果指定的检验的元素o和队列中的元素的类别不同，则抛出ClassCastException；
+如果指定查找的元素为空，则抛出NullPointerException；
+
+25. public int size();
+返回这个队列包含元素的个数；
+
+26.Iterator<E> iterator();
+从队列的头部顺序遍历返回队列中的每个元素；
+
+27.Iterator<E> descendingIterator();
+从队列的尾部逆序遍历返回队列中的每个元素；
+
+
